@@ -1,7 +1,7 @@
 "use strict";
 
 const apiKey = "4VbgYq9AdJ0dy9UxCGuhVgRNwewdosWLDcRHWVDh";
-const searchURL = "https://www.developer.nps.gov/api/v1/parks";
+const searchURL = "https://developer.nps.gov/api/v1/parks";
 
 function formatQueryParams(params) {
   const queryItems = Object.keys(params).map((key) => `${key}=${params[key]}`);
@@ -13,29 +13,21 @@ function displayResults(responseJson) {
   console.log(responseJson);
   $("#results-list").empty();
   // iterate through the items array
-  for (let i = 0; i < responseJson.items.length; i++) {
-    // for each video object in the items
-    //array, add a list item to the results
-    //list with the video title, description,
-    //and thumbnail
+  for (let i = 0; i < responseJson.length; i++) {
     $("#results-list").append(
-      `<li><h3>${responseJson.fullName[i]}</h3>
-      <p>${responseJson.items[i].snippet.description}</p>
-      <img src='${responseJson.items[i].snippet.thumbnails.default.url}'> 
-      </li>`
+      `<li><h3><a href="${responseJson.data[i].url}">${responseJson.data[i].fullName}</a></h3></li>
+      <p>${responseJson.data[i].description}</p>`
     );
+    console.log(responseJson.data[i]);
   }
-  //display the results section
+
   $("#results").removeClass("hidden");
 }
 
 function getParks(searchTerm, maxResults = 10) {
-  const headers = {
-    "x-api-key": apiKey,
-  };
   const params = {
     q: searchTerm,
-    //api_key: apiKey,
+    api_key: apiKey,
     limit: maxResults,
   };
   const queryString = formatQueryParams(params);
@@ -43,10 +35,9 @@ function getParks(searchTerm, maxResults = 10) {
 
   console.log(url);
 
-  fetch(url, headers)
+  fetch(url)
     .then((response) => {
       if (response.ok) {
-        /*THIS IS WHERE IT BREAKS, response is not ok?*/
         return response.json();
       }
       throw new Error(response.statusText);
