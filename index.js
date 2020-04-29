@@ -9,18 +9,14 @@ function formatQueryParams(params) {
 }
 
 function displayResults(responseJson) {
-  // if there are previous results, remove them
   console.log(responseJson);
   $("#results-list").empty();
-  // iterate through the items array
-  for (let i = 0; i < responseJson.length; i++) {
+  for (let i = 0; i < responseJson.data.length; i++) {
     $("#results-list").append(
-      `<li><h3><a href="${responseJson.data[i].url}">${responseJson.data[i].fullName}</a></h3></li>
+      `<li><h3><a href="${responseJson.data[i].url}" target="_blank">${responseJson.data[i].fullName}</a></h3></li>
       <p>${responseJson.data[i].description}</p>`
     );
-    console.log(responseJson.data[i]);
   }
-
   $("#results").removeClass("hidden");
 }
 
