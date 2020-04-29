@@ -1,12 +1,10 @@
 "use strict";
 
 const apiKey = "4VbgYq9AdJ0dy9UxCGuhVgRNwewdosWLDcRHWVDh";
-const searchURL = "https://www.developer.nps.gov/api/v1";
+const searchURL = "https://www.developer.nps.gov/api/v1/parks";
 
 function formatQueryParams(params) {
-  const queryItems = Object.keys(params).map(
-    (key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
-  );
+  const queryItems = Object.keys(params).map((key) => `${key}=${params[key]}`);
   return queryItems.join("&");
 }
 
@@ -21,9 +19,9 @@ function displayResults(responseJson) {
     //list with the video title, description,
     //and thumbnail
     $("#results-list").append(
-      `<li><h3>${responseJson.items[i].snippet.title}</h3>
+      `<li><h3>${responseJson.fullName[i]}</h3>
       <p>${responseJson.items[i].snippet.description}</p>
-      <img src='${responseJson.items[i].snippet.thumbnails.default.url}'>
+      <img src='${responseJson.items[i].snippet.thumbnails.default.url}'> 
       </li>`
     );
   }
@@ -31,22 +29,24 @@ function displayResults(responseJson) {
   $("#results").removeClass("hidden");
 }
 
-function getYouTubeVideos(query, maxResults = 10) {
+function getParks(searchTerm, maxResults = 10) {
+  const headers = {
+    "x-api-key": apiKey,
+  };
   const params = {
-    key: apiKey,
-    q: query,
-    part: "snippet",
-    maxResults,
-    type: "video",
+    q: searchTerm,
+    //api_key: apiKey,
+    limit: maxResults,
   };
   const queryString = formatQueryParams(params);
   const url = searchURL + "?" + queryString;
 
   console.log(url);
 
-  fetch(url)
+  fetch(url, headers)
     .then((response) => {
       if (response.ok) {
+        /*THIS IS WHERE IT BREAKS, response is not ok?*/
         return response.json();
       }
       throw new Error(response.statusText);
@@ -62,7 +62,7 @@ function watchForm() {
     event.preventDefault();
     const searchTerm = $("#js-search-term").val();
     const maxResults = $("#js-max-results").val();
-    getYouTubeVideos(searchTerm, maxResults);
+    getParks(searchTerm, maxResults);
   });
 }
 
