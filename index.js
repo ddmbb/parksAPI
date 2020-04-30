@@ -22,7 +22,7 @@ function displayResults(responseJson) {
 
 function getParks(searchTerm, maxResults = 10) {
   const params = {
-    q: searchTerm,
+    stateCode: searchTerm,
     api_key: apiKey,
     limit: maxResults,
   };
@@ -47,7 +47,7 @@ function getParks(searchTerm, maxResults = 10) {
 function watchForm() {
   $("form").submit((event) => {
     event.preventDefault();
-    const searchTerm = $("#js-search-term").val().replace(" ", "&q=");
+    const searchTerm = $("#js-search-term").val().replace(/\s/g, "%2C%20");
     const maxResults = $("#js-max-results").val();
     getParks(searchTerm, maxResults);
   });
